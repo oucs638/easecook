@@ -1,0 +1,6 @@
+pyproject.toml
+easecook_backend.egg-info/PKG-INFO
+easecook_backend.egg-info/SOURCES.txt
+easecook_backend.egg-info/dependency_links.txt
+easecook_backend.egg-info/requires.txt
+easecook_backend.egg-info/top_level.txt

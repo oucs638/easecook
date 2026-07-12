@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: easecook-backend
+Version: 0.1.0
+Summary: Backend API for the EaseCook meal planning application.
+Requires-Python: >=3.14
+Requires-Dist: Django<6.1,>=6.0
+Requires-Dist: django-cors-headers<5.0,>=4.7
+Requires-Dist: djangorestframework<3.17,>=3.16
+Requires-Dist: djangorestframework-simplejwt<6.0,>=5.5
+Requires-Dist: drf-spectacular<0.29,>=0.28
+Requires-Dist: psycopg[binary]<4.0,>=3.2
+Requires-Dist: python-dotenv<2.0,>=1.1
+Provides-Extra: dev
+Requires-Dist: coverage<8.0,>=7.9; extra == "dev"
+Requires-Dist: pytest<9.0,>=8.4; extra == "dev"
+Requires-Dist: pytest-django<5.0,>=4.11; extra == "dev"
+Requires-Dist: ruff<0.13,>=0.12; extra == "dev"
