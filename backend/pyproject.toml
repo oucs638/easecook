@@ -32,6 +32,10 @@ py-modules = []
 line-length = 88
 target-version = "py314"
 
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "DJ", "D"]
 ignore = ["D100", "D104"]

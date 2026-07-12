@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +30,10 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "drf_spectacular",
+    "apps.accounts",
+    "apps.recipes",
+    "apps.meal_plans",
+    "apps.shopping",
 ]
 
 MIDDLEWARE = [
