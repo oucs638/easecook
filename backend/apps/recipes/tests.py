@@ -2,10 +2,11 @@
 
 from decimal import Decimal
 
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from apps.recipes.models import Ingredient, Recipe, RecipeIngredient
+from apps.recipes.models import Ingredient, Recipe, RecipeIngredient, RecipeStep
 
 
 class RecipeModelTest(TestCase):
@@ -40,3 +41,15 @@ class RecipeModelTest(TestCase):
         )
 
         self.assertEqual(str(recipe_ingredient), "2.00 piece Egg")
+
+
+class RecipeAdminTests(TestCase):
+    """Tests for recipe admin registration."""
+
+    def test_recipe_models_are_registered_in_admin(self) -> None:
+        """Recipe models should be available in Django admin."""
+        registered_models = (Ingredient, Recipe, RecipeIngredient, RecipeStep)
+
+        for model in registered_models:
+            with self.subTest(model=model.__name__):
+                self.assertTrue(admin.site.is_registered(model))

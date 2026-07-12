@@ -1,5 +1,6 @@
 """Tests for account models."""
 
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
@@ -26,3 +27,11 @@ class UserProfileModelTest(TestCase):
         profile = UserProfile.objects.create(user=user)
 
         self.assertEqual(str(profile), "fallback_user")
+
+
+class UserProfileAdminTest(TestCase):
+    """Tests for user profile admin registration."""
+
+    def test_user_profile_is_registered_in_admin(self) -> None:
+        """UserProfile should be available in Django admin."""
+        self.assertTrue(admin.site.is_registered(UserProfile))

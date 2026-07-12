@@ -2,6 +2,7 @@
 
 from datetime import date
 
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
@@ -33,3 +34,15 @@ class MealPlanModelTests(TestCase):
         )
 
         self.assertEqual(str(item), "2027-01-01 dinner: Sample Rice Bowl")
+
+
+class MealPlanAdminTests(TestCase):
+    """Tests for meal planning admin registration."""
+
+    def test_meal_plan_models_are_registered_in_admin(self) -> None:
+        """Meal planning models should be available in Django admin."""
+        registered_models = (MealPlan, MealPlanItem)
+
+        for model in registered_models:
+            with self.subTest(model=model.__name__):
+                self.assertTrue(admin.site.is_registered(model))
