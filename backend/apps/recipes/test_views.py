@@ -20,12 +20,15 @@ class RecipeApiTests(TestCase):
         client.force_authenticate(user=user)
 
         response = client.post(
-            "/api/recipes/", {
+            "/api/recipes/",
+            {
                 "title": "API Pasta",
                 "servings": 2,
                 "prep_minutes": 10,
                 "cook_minutes": 15,
-            }, format="json", )
+            },
+            format="json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         recipe = Recipe.objects.get(title="API Pasta")
@@ -40,9 +43,7 @@ class RecipeApiTests(TestCase):
         viewer = get_user_model().objects.create_user(
             username="public_recipe_viewer", password="test-pass"
         )
-        recipe = Recipe.objects.create(
-            owner=owner, title="Public Soup", is_public=True
-        )
+        recipe = Recipe.objects.create(owner=owner, title="Public Soup", is_public=True)
         client = APIClient()
         client.force_authenticate(user=viewer)
 
@@ -84,7 +85,7 @@ class RecipeApiTests(TestCase):
         response = client.patch(
             f"/api/recipes/{recipe.id}/",
             {"title": "Changed By Other User"},
-            format="json"
+            format="json",
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

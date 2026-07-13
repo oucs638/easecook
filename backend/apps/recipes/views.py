@@ -34,9 +34,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if not user.is_authenticated:
             return Recipe.objects.filter(is_public=True)
 
-        return Recipe.objects.filter(
-            Q(owner=user) | Q(is_public=True)
-        ).distinct()
+        return Recipe.objects.filter(Q(owner=user) | Q(is_public=True)).distinct()
 
     def perform_create(self, serializer):
         """Create a recipe owned by the current user."""
