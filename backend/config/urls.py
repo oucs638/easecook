@@ -1,7 +1,7 @@
 """Root URL configuration for the EaseCook backend."""
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
@@ -12,4 +12,8 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
+    path("api/", include("apps.accounts.urls")),
+    path("api/", include("apps.recipes.urls")),
+    path("api/", include("apps.meal_plans.urls")),
+    path("api/", include("apps.shopping.urls")),
 ]
