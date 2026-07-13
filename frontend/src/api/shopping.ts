@@ -111,3 +111,78 @@ export async function updateShoppingListItem(
     sourceMealPlanItemId: item.source_meal_plan_item,
   };
 }
+
+export interface PantryItemDto {
+  id: number;
+  owner: number;
+  ingredient: number;
+  ingredient_name: string;
+  quantity: string;
+  unit: string;
+  expiration_date: string | null;
+  note: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PantryItem {
+  id: number;
+  ownerId: number;
+  ingredientId: number;
+  ingredientName: string;
+  quantity: string;
+  unit: string;
+  expirationDate: string | null;
+  note: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreatePantryItemPayload {
+  ingredient: number;
+  quantity: string;
+  unit: string;
+  expiration_date: string | null;
+  note: string;
+}
+
+/**
+ * Converts a pantry item response from Django format to frontend format.
+ */
+export function mapPantryItem(dto: PantryItemDto): PantryItem {
+  return {
+    id: dto.id,
+    ownerId: dto.owner,
+    ingredientId: dto.ingredient,
+    ingredientName: dto.ingredient_name,
+    quantity: dto.quantity,
+    unit: dto.unit,
+    expirationDate: dto.expiration_date,
+    note: dto.note,
+    createdAt: dto.created_at,
+    updatedAt: dto.updated_at,
+  };
+}
+
+/**
+ * Fetches pantry items owned by the current authenticated user.
+ */
+export async function listPantryItems(): Promise<PantryItem[]> {
+  const pantryItems = await apiRequest<PantryItemDto[]>("/pantry-items/");
+
+  return pantryItems.map(mapPantryItem);
+}
+
+/**
+ * Creates one pantry item for the current authenticated user.
+ */
+export async function createPantryItem(
+  payload: CreatePantryItemPayload,
+): Promise<PantryItem> {
+  const pantryItem = await apiRequest<PantryItemDto>("/pantry-items/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return mapPantryItem(pantryItem);
+}

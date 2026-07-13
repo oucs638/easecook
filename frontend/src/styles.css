@@ -471,3 +471,77 @@
   font-weight: 800;
   padding: 4px 10px;
 }
+
+.pantry-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.pantry-form label {
+  color: #36423b;
+  display: grid;
+  font-size: 0.92rem;
+  font-weight: 700;
+  gap: 6px;
+}
+
+.pantry-form input,
+.pantry-form select {
+  border: 1px solid #ccc5bb;
+  border-radius: 8px;
+  color: #1c211b;
+  font: inherit;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.pantry-form input:focus,
+.pantry-form select:focus {
+  border-color: #26645c;
+  outline: 3px solid #d6e7e2;
+}
+
+.pantry-form button {
+  background: #26645c;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 10px 14px;
+}
+
+.pantry-form button:hover {
+  background: #1d514a;
+}
+
+.pantry-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.pantry-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.pantry-card {
+  align-items: start;
+  border: 1px solid #e1d9cd;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+}
+
+.pantry-card h3 {
+  margin: 0;
+}
+
+.pantry-card p {
+  color: #637067;
+  margin: 4px 0 0;
+}

@@ -4,11 +4,11 @@ import {AppShell} from "./components/AppShell";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {DashboardPage} from "./pages/DashboardPage";
 import {LoginPage} from "./pages/LoginPage";
-import {PlaceholderPage} from "./pages/PlaceholderPage";
 import {RegisterPage} from "./pages/RegisterPage";
 import {RecipesPage} from "./pages/RecipesPage";
 import {MealPlanPage} from "./pages/MealPlanPage";
 import {ShoppingPage} from "./pages/ShoppingPage";
+import {PantryPage} from "./pages/PantryPage";
 
 export function App() {
   return (
@@ -21,15 +21,7 @@ export function App() {
           <Route index element={<DashboardPage/>}/>
           <Route element={<RecipesPage/>} path="recipes"/>
           <Route element={<MealPlanPage/>} path="meal-plan"/>
-          <Route
-            element={
-              <PlaceholderPage
-                title="Pantry"
-                description="Pantry tracking will show owned ingredients and quantities here."
-              />
-            }
-            path="pantry"
-          />
+          <Route element={<PantryPage/>} path="pantry"/>
           <Route element={<ShoppingPage/>} path="shopping"/>
         </Route>
       </Route>

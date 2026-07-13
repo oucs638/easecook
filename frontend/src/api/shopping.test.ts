@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {mapShoppingList, type ShoppingListDto} from "./shopping";
+import {mapPantryItem, mapShoppingList, type PantryItemDto, type ShoppingListDto,} from "./shopping";
 
 describe("mapShoppingList", () => {
   it("converts shopping list API fields to frontend fields", () => {
@@ -41,6 +41,36 @@ describe("mapShoppingList", () => {
           sourceMealPlanItemId: 5,
         },
       ],
+    });
+  });
+});
+
+describe("mapPantryItem", () => {
+  it("converts pantry item API fields to frontend fields", () => {
+    const dto: PantryItemDto = {
+      id: 1,
+      owner: 7,
+      ingredient: 3,
+      ingredient_name: "Rice",
+      quantity: "1000.00",
+      unit: "g",
+      expiration_date: "2026-08-01",
+      note: "Stored in pantry box.",
+      created_at: "2026-07-13T00:00:00Z",
+      updated_at: "2026-07-13T00:00:00Z",
+    };
+
+    expect(mapPantryItem(dto)).toEqual({
+      id: 1,
+      ownerId: 7,
+      ingredientId: 3,
+      ingredientName: "Rice",
+      quantity: "1000.00",
+      unit: "g",
+      expirationDate: "2026-08-01",
+      note: "Stored in pantry box.",
+      createdAt: "2026-07-13T00:00:00Z",
+      updatedAt: "2026-07-13T00:00:00Z",
     });
   });
 });
