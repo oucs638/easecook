@@ -279,3 +279,108 @@
     display: grid;
   }
 }
+
+.meal-plan-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.meal-plan-form label {
+  color: #36423b;
+  display: grid;
+  font-size: 0.92rem;
+  font-weight: 700;
+  gap: 6px;
+}
+
+.meal-plan-form input,
+.meal-plan-form select {
+  border: 1px solid #ccc5bb;
+  border-radius: 8px;
+  color: #1c211b;
+  font: inherit;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.meal-plan-form input:focus,
+.meal-plan-form select:focus {
+  border-color: #26645c;
+  outline: 3px solid #d6e7e2;
+}
+
+.meal-plan-form button {
+  background: #26645c;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 10px 14px;
+}
+
+.meal-plan-form button:hover {
+  background: #1d514a;
+}
+
+.meal-plan-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.section-divider {
+  border-top: 1px solid #e1d9cd;
+  margin: 24px 0;
+}
+
+.meal-plan-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.meal-plan-card {
+  border: 1px solid #e1d9cd;
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.meal-plan-card h3 {
+  margin: 0;
+}
+
+.meal-plan-card p {
+  color: #637067;
+  margin: 6px 0 0;
+}
+
+.planned-meal-list {
+  display: grid;
+  gap: 10px;
+}
+
+.planned-meal {
+  background: #f7f4ef;
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.planned-meal strong {
+  color: #1c211b;
+}
+
+.planned-meal span {
+  color: #5d665f;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.planned-meal p {
+  margin: 0;
+}

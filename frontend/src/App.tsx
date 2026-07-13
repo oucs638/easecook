@@ -7,6 +7,7 @@ import {LoginPage} from "./pages/LoginPage";
 import {PlaceholderPage} from "./pages/PlaceholderPage";
 import {RegisterPage} from "./pages/RegisterPage";
 import {RecipesPage} from "./pages/RecipesPage";
+import {MealPlanPage} from "./pages/MealPlanPage";
 
 export function App() {
   return (
@@ -18,15 +19,7 @@ export function App() {
         <Route element={<AppShell/>} path="/">
           <Route index element={<DashboardPage/>}/>
           <Route element={<RecipesPage/>} path="recipes"/>
-          <Route
-            element={
-              <PlaceholderPage
-                title="Meal Plan"
-                description="Weekly scheduling UI will use meal plan API endpoints here."
-              />
-            }
-            path="meal-plan"
-          />
+          <Route element={<MealPlanPage/>} path="meal-plan"/>
           <Route
             element={
               <PlaceholderPage
