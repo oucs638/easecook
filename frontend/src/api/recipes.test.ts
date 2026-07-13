@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 
-import {mapRecipe, type RecipeDto} from "./recipes";
+import {type IngredientDto, mapIngredient, mapRecipe, type RecipeDto,} from "./recipes";
 
 describe("mapRecipe", () => {
   it("converts recipe API fields to frontend fields", () => {
@@ -61,6 +61,28 @@ describe("mapRecipe", () => {
           instruction: "Cook pasta.",
         },
       ],
+    });
+  });
+});
+
+describe("mapIngredient", () => {
+  it("converts ingredient API fields to frontend fields", () => {
+    const dto: IngredientDto = {
+      id: 3,
+      name: "Tomato",
+      category: "vegetable",
+      default_unit: "piece",
+      created_at: "2026-07-13T00:00:00Z",
+      updated_at: "2026-07-13T00:00:00Z",
+    };
+
+    expect(mapIngredient(dto)).toEqual({
+      id: 3,
+      name: "Tomato",
+      category: "vegetable",
+      defaultUnit: "piece",
+      createdAt: "2026-07-13T00:00:00Z",
+      updatedAt: "2026-07-13T00:00:00Z",
     });
   });
 });

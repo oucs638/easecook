@@ -1,7 +1,18 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {type FormEvent, useState} from "react";
 
-import {createRecipe, type CreateRecipePayload, listRecipes, type RecipeDifficulty,} from "../api/recipes";
+import {
+  createIngredient,
+  createRecipe,
+  createRecipeIngredient,
+  type CreateRecipePayload,
+  type Ingredient,
+  type IngredientCategory,
+  listIngredients,
+  listRecipes,
+  type Recipe,
+  type RecipeDifficulty,
+} from "../api/recipes";
 
 interface RecipeFormState {
   title: string;
@@ -14,6 +25,21 @@ interface RecipeFormState {
   isPublic: boolean;
 }
 
+interface IngredientFormState {
+  name: string;
+  category: IngredientCategory;
+  defaultUnit: string;
+}
+
+interface RecipeIngredientFormState {
+  recipeId: string;
+  ingredientId: string;
+  quantity: string;
+  unit: string;
+  note: string;
+  order: number;
+}
+
 const defaultRecipeForm: RecipeFormState = {
   title: "",
   description: "",
@@ -24,6 +50,24 @@ const defaultRecipeForm: RecipeFormState = {
   tagsText: "",
   isPublic: false,
 };
+
+const defaultIngredientForm: IngredientFormState = {
+  name: "",
+  category: "other",
+  defaultUnit: "",
+};
+
+const defaultRecipeIngredientForm: RecipeIngredientFormState = {
+  recipeId: "",
+  ingredientId: "",
+  quantity: "1.00",
+  unit: "",
+  note: "",
+  order: 1,
+};
+
+const emptyRecipes: Recipe[] = [];
+const emptyIngredients: Ingredient[] = [];
 
 /**
  * Converts form-only fields into the backend create payload.
@@ -57,10 +101,19 @@ function formatDifficulty(difficulty: RecipeDifficulty): string {
 export function RecipesPage() {
   const queryClient = useQueryClient();
   const [draftRecipe, setDraftRecipe] = useState(defaultRecipeForm);
+  const [ingredientDraft, setIngredientDraft] = useState(defaultIngredientForm);
+  const [recipeIngredientDraft, setRecipeIngredientDraft] = useState(
+    defaultRecipeIngredientForm,
+  );
 
   const recipesQuery = useQuery({
     queryKey: ["recipes"],
     queryFn: listRecipes,
+  });
+
+  const ingredientsQuery = useQuery({
+    queryKey: ["ingredients"],
+    queryFn: listIngredients,
   });
 
   const createRecipeMutation = useMutation({
@@ -71,10 +124,63 @@ export function RecipesPage() {
     },
   });
 
+  const createIngredientMutation = useMutation({
+    mutationFn: createIngredient,
+    onSuccess: async (ingredient) => {
+      setIngredientDraft(defaultIngredientForm);
+      setRecipeIngredientDraft((currentDraft) => ({
+        ...currentDraft,
+        ingredientId: String(ingredient.id),
+        unit: ingredient.defaultUnit,
+      }));
+      await queryClient.invalidateQueries({queryKey: ["ingredients"]});
+    },
+  });
+
+  const createRecipeIngredientMutation = useMutation({
+    mutationFn: createRecipeIngredient,
+    onSuccess: async () => {
+      setRecipeIngredientDraft((currentDraft) => ({
+        ...currentDraft,
+        quantity: "1.00",
+        note: "",
+        order: currentDraft.order + 1,
+      }));
+      await queryClient.invalidateQueries({queryKey: ["recipes"]});
+    },
+  });
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
 
     await createRecipeMutation.mutateAsync(buildCreateRecipePayload(draftRecipe));
+  }
+
+  async function handleCreateIngredient(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    event.preventDefault();
+
+    await createIngredientMutation.mutateAsync({
+      name: ingredientDraft.name.trim(),
+      category: ingredientDraft.category,
+      default_unit: ingredientDraft.defaultUnit.trim(),
+    });
+  }
+
+  async function handleCreateRecipeIngredient(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    event.preventDefault();
+
+    await createRecipeIngredientMutation.mutateAsync({
+      recipe: Number(recipeIngredientDraft.recipeId),
+      ingredient: Number(recipeIngredientDraft.ingredientId),
+      quantity: recipeIngredientDraft.quantity,
+      unit: recipeIngredientDraft.unit.trim(),
+      note: recipeIngredientDraft.note.trim(),
+      order: recipeIngredientDraft.order,
+    });
   }
 
   function updateDraftRecipe<TField extends keyof RecipeFormState>(
@@ -87,7 +193,27 @@ export function RecipesPage() {
     }));
   }
 
-  const recipes = recipesQuery.data ?? [];
+  function updateIngredientDraft<TField extends keyof IngredientFormState>(
+    field: TField,
+    value: IngredientFormState[TField],
+  ): void {
+    setIngredientDraft((currentIngredient) => ({
+      ...currentIngredient,
+      [field]: value,
+    }));
+  }
+
+  function updateRecipeIngredientDraft<
+    TField extends keyof RecipeIngredientFormState,
+  >(field: TField, value: RecipeIngredientFormState[TField]): void {
+    setRecipeIngredientDraft((currentIngredient) => ({
+      ...currentIngredient,
+      [field]: value,
+    }));
+  }
+
+  const recipes = recipesQuery.data ?? emptyRecipes;
+  const ingredients = ingredientsQuery.data ?? emptyIngredients;
 
   return (
     <div className="page">
@@ -225,6 +351,182 @@ export function RecipesPage() {
               {createRecipeMutation.isPending ? "Creating..." : "Create recipe"}
             </button>
           </form>
+          <div className="section-divider"/>
+
+          <div className="section-heading">
+            <p className="eyebrow">Ingredients</p>
+            <h2>Create ingredient</h2>
+          </div>
+
+          <form className="recipe-form" onSubmit={handleCreateIngredient}>
+            <label>
+              Name
+              <input
+                maxLength={120}
+                required
+                type="text"
+                value={ingredientDraft.name}
+                onChange={(event) =>
+                  updateIngredientDraft("name", event.target.value)
+                }
+              />
+            </label>
+
+            <label>
+              Category
+              <select
+                value={ingredientDraft.category}
+                onChange={(event) =>
+                  updateIngredientDraft(
+                    "category",
+                    event.target.value as IngredientCategory,
+                  )
+                }
+              >
+                <option value="protein">Protein</option>
+                <option value="vegetable">Vegetable</option>
+                <option value="fruit">Fruit</option>
+                <option value="grain">Grain</option>
+                <option value="dairy">Dairy</option>
+                <option value="seasoning">Seasoning</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+
+            <label>
+              Default unit
+              <input
+                maxLength={30}
+                placeholder="g, ml, piece"
+                type="text"
+                value={ingredientDraft.defaultUnit}
+                onChange={(event) =>
+                  updateIngredientDraft("defaultUnit", event.target.value)
+                }
+              />
+            </label>
+
+            {createIngredientMutation.isError ? (
+              <p className="form-error">Unable to create ingredient.</p>
+            ) : null}
+
+            <button disabled={createIngredientMutation.isPending} type="submit">
+              {createIngredientMutation.isPending
+                ? "Creating..."
+                : "Create ingredient"}
+            </button>
+          </form>
+          <div className="section-divider"/>
+
+          <div className="section-heading">
+            <p className="eyebrow">Recipe ingredients</p>
+            <h2>Add ingredient to recipe</h2>
+          </div>
+
+          <form className="recipe-form" onSubmit={handleCreateRecipeIngredient}>
+            <label>
+              Recipe
+              <select
+                required
+                value={recipeIngredientDraft.recipeId}
+                onChange={(event) =>
+                  updateRecipeIngredientDraft("recipeId", event.target.value)
+                }
+              >
+                <option value="">Choose a recipe</option>
+                {recipes.map((recipe) => (
+                  <option key={recipe.id} value={recipe.id}>
+                    {recipe.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              Ingredient
+              <select
+                required
+                value={recipeIngredientDraft.ingredientId}
+                onChange={(event) => {
+                  const ingredient = ingredients.find(
+                    (currentIngredient) =>
+                      currentIngredient.id === Number(event.target.value),
+                  );
+
+                  updateRecipeIngredientDraft("ingredientId", event.target.value);
+                  updateRecipeIngredientDraft(
+                    "unit",
+                    ingredient?.defaultUnit ?? recipeIngredientDraft.unit,
+                  );
+                }}
+              >
+                <option value="">Choose an ingredient</option>
+                {ingredients.map((ingredient) => (
+                  <option key={ingredient.id} value={ingredient.id}>
+                    {ingredient.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="form-row">
+              <label>
+                Quantity
+                <input
+                  min="0.01"
+                  required
+                  step="0.01"
+                  type="number"
+                  value={recipeIngredientDraft.quantity}
+                  onChange={(event) =>
+                    updateRecipeIngredientDraft("quantity", event.target.value)
+                  }
+                />
+              </label>
+
+              <label>
+                Unit
+                <input
+                  maxLength={30}
+                  required
+                  type="text"
+                  value={recipeIngredientDraft.unit}
+                  onChange={(event) =>
+                    updateRecipeIngredientDraft("unit", event.target.value)
+                  }
+                />
+              </label>
+            </div>
+
+            <label>
+              Note
+              <input
+                maxLength={160}
+                type="text"
+                value={recipeIngredientDraft.note}
+                onChange={(event) =>
+                  updateRecipeIngredientDraft("note", event.target.value)
+                }
+              />
+            </label>
+
+            {createRecipeIngredientMutation.isError ? (
+              <p className="form-error">Unable to add ingredient to recipe.</p>
+            ) : null}
+
+            <button
+              disabled={
+                createRecipeIngredientMutation.isPending ||
+                recipes.length === 0 ||
+                ingredients.length === 0
+              }
+              type="submit"
+            >
+              {createRecipeIngredientMutation.isPending
+                ? "Adding..."
+                : "Add to recipe"}
+            </button>
+          </form>
         </section>
 
         <section className="panel">
@@ -273,6 +575,17 @@ export function RecipesPage() {
                     ))}
                   </div>
                 ) : null}
+                {recipe.ingredients.length > 0 ? (
+                  <div className="recipe-ingredient-list">
+                    {recipe.ingredients.map((ingredient) => (
+                      <span key={ingredient.id}>
+        {ingredient.quantity} {ingredient.unit} {ingredient.ingredientName}
+      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="status-text">No ingredients yet.</p>
+                )}
               </article>
             ))}
           </div>

@@ -456,3 +456,18 @@
 .shopping-item strong {
   color: #1c211b;
 }
+
+.recipe-ingredient-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recipe-ingredient-list span {
+  background: #edf3ef;
+  border-radius: 999px;
+  color: #31534d;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 4px 10px;
+}

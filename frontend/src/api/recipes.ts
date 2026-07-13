@@ -2,6 +2,48 @@ import {apiRequest} from "./client";
 
 export type RecipeDifficulty = "easy" | "medium" | "hard";
 
+export type IngredientCategory =
+  | "protein"
+  | "vegetable"
+  | "fruit"
+  | "grain"
+  | "dairy"
+  | "seasoning"
+  | "other";
+
+export interface IngredientDto {
+  id: number;
+  name: string;
+  category: IngredientCategory;
+  default_unit: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Ingredient {
+  id: number;
+  name: string;
+  category: IngredientCategory;
+  defaultUnit: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateIngredientPayload {
+  name: string;
+  category: IngredientCategory;
+  default_unit: string;
+}
+
+export interface CreateRecipeIngredientPayload {
+  recipe: number;
+  ingredient: number;
+  quantity: string;
+  unit: string;
+  note: string;
+  order: number;
+}
+
 export interface RecipeIngredientDto {
   id: number;
   recipe: number;
@@ -90,6 +132,20 @@ export interface CreateRecipePayload {
 }
 
 /**
+ * Converts an ingredient response from Django format to frontend format.
+ */
+export function mapIngredient(dto: IngredientDto): Ingredient {
+  return {
+    id: dto.id,
+    name: dto.name,
+    category: dto.category,
+    defaultUnit: dto.default_unit,
+    createdAt: dto.created_at,
+    updatedAt: dto.updated_at,
+  };
+}
+
+/**
  * Converts a recipe response from Django serializer format to frontend format.
  */
 export function mapRecipe(dto: RecipeDto): Recipe {
@@ -147,4 +203,53 @@ export async function createRecipe(payload: CreateRecipePayload): Promise<Recipe
   });
 
   return mapRecipe(recipe);
+}
+
+/**
+ * Fetches reusable ingredients.
+ */
+export async function listIngredients(): Promise<Ingredient[]> {
+  const ingredients = await apiRequest<IngredientDto[]>("/ingredients/");
+
+  return ingredients.map(mapIngredient);
+}
+
+/**
+ * Creates a reusable ingredient.
+ */
+export async function createIngredient(
+  payload: CreateIngredientPayload,
+): Promise<Ingredient> {
+  const ingredient = await apiRequest<IngredientDto>("/ingredients/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return mapIngredient(ingredient);
+}
+
+/**
+ * Adds one ingredient requirement to a recipe.
+ */
+export async function createRecipeIngredient(
+  payload: CreateRecipeIngredientPayload,
+): Promise<RecipeIngredient> {
+  const recipeIngredient = await apiRequest<RecipeIngredientDto>(
+    "/recipe-ingredients/",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
+
+  return {
+    id: recipeIngredient.id,
+    recipeId: recipeIngredient.recipe,
+    ingredientId: recipeIngredient.ingredient,
+    ingredientName: recipeIngredient.ingredient_name,
+    quantity: recipeIngredient.quantity,
+    unit: recipeIngredient.unit,
+    note: recipeIngredient.note,
+    order: recipeIngredient.order,
+  };
 }
