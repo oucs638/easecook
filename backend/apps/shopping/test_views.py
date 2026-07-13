@@ -27,3 +27,22 @@ class ShoppingListApiTests(TestCase):
         shopping_list = ShoppingList.objects.get(name="API Shopping List")
         self.assertEqual(shopping_list.owner, user)
         self.assertEqual(response.data["owner_username"], "shopping_api_owner")
+
+    def test_shopping_list_only_returns_current_user_lists(self) -> None:
+        """Shopping list endpoint should only include current user data."""
+        user = get_user_model().objects.create_user(
+            username="shopping_list_owner", password="test-pass"
+        )
+        other_user = get_user_model().objects.create_user(
+            username="other_shopping_owner", password="test-pass"
+        )
+        ShoppingList.objects.create(owner=user, name="Current User List")
+        ShoppingList.objects.create(owner=other_user, name="Other User List")
+        client = APIClient()
+        client.force_authenticate(user=user)
+
+        response = client.get("/api/shopping-lists/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["name"], "Current User List")

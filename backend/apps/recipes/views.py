@@ -34,11 +34,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if not user.is_authenticated:
             return Recipe.objects.filter(is_public=True)
 
-        return Recipe.objects.filter(Q(owner=user) | Q(is_public=True)).distinct()
+        return Recipe.objects.filter(
+            Q(owner=user) | Q(is_public=True)
+        ).distinct()
 
     def perform_create(self, serializer):
         """Create a recipe owned by the current user."""
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        """Update a recipe only when it belongs to the current user."""
+        recipe = self.get_object()
+        if recipe.owner != self.request.user.id:
+            raise PermissionDenied("Cannot update another user's recipe.")
+
+        serializer.save()
+
+    def perform_destroy(self, instance: Recipe):
+        """Delete a recipe only when it belongs to the current user."""
+        if instance.owner != self.request.user.id:
+            raise PermissionDenied("Cannot delete another user's recipe.")
+
+        instance.delete()
 
 
 class RecipeIngredientViewSet(viewsets.ModelViewSet):
