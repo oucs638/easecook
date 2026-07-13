@@ -1,4 +1,4 @@
-.PHONY: build up down backend-check backend-test frontend-build frontend-lint
+.PHONY: build up down backend-check backend-test frontend-build frontend-lint seed-demo
 
 build:
 	docker compose build
@@ -20,3 +20,6 @@ frontend-build:
 
 frontend-lint:
 	docker compose run --rm frontend npm run lint
+
+seed-demo:
+	docker compose run --rm backend python manage.py seed_demo_data
