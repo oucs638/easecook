@@ -1,7 +1,14 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {type FormEvent, useMemo, useState} from "react";
 
-import {createMealPlan, createMealPlanItem, listMealPlans, type MealPlan, type MealType,} from "../api/mealPlans";
+import {
+  createMealPlan,
+  createMealPlanItem,
+  generateShoppingListFromMealPlan,
+  listMealPlans,
+  type MealPlan,
+  type MealType,
+} from "../api/mealPlans";
 import {listRecipes, type Recipe} from "../api/recipes";
 
 interface MealPlanFormState {
@@ -107,6 +114,14 @@ export function MealPlanPage() {
         note: "",
       }));
       await queryClient.invalidateQueries({queryKey: ["mealPlans"]});
+    },
+  });
+
+  const generateShoppingListMutation = useMutation({
+    mutationFn: (mealPlanId: number) =>
+      generateShoppingListFromMealPlan(mealPlanId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: ["shoppingLists"]});
     },
   });
 
@@ -382,6 +397,16 @@ export function MealPlanPage() {
                   <span className="recipe-card-badge">
                     {mealPlan.items.length} meals
                   </span>
+                  <button
+                    className="secondary-action-button"
+                    disabled={
+                      mealPlan.items.length === 0 || generateShoppingListMutation.isPending
+                    }
+                    type="button"
+                    onClick={() => generateShoppingListMutation.mutate(mealPlan.id)}
+                  >
+                    Generate shopping list
+                  </button>
                 </div>
 
                 {mealPlan.items.length > 0 ? (

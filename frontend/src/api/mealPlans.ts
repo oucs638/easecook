@@ -1,5 +1,7 @@
 import {apiRequest} from "./client";
 
+import {mapShoppingList, type ShoppingList, type ShoppingListDto,} from "./shopping";
+
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack";
 
 export interface MealPlanItemDto {
@@ -133,4 +135,26 @@ export async function createMealPlanItem(
     servings: item.servings,
     note: item.note,
   };
+}
+
+export interface GenerateShoppingListPayload {
+  name?: string;
+}
+
+/**
+ * Generates a shopping list from one meal plan.
+ */
+export async function generateShoppingListFromMealPlan(
+  mealPlanId: number,
+  payload: GenerateShoppingListPayload = {},
+): Promise<ShoppingList> {
+  const shoppingList = await apiRequest<ShoppingListDto>(
+    `/meal-plans/${mealPlanId}/generate-shopping-list/`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
+
+  return mapShoppingList(shoppingList);
 }
