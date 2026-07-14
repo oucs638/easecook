@@ -2,16 +2,20 @@ import {MetricCard} from "../components/MetricCard";
 
 const workflowSteps = [
   {
-    title: "Create recipes",
-    description: "Store ingredients, servings, difficulty, and ordered steps.",
+    title: "Build a recipe library",
+    description: "Create recipes with reusable ingredients and preparation time.",
   },
   {
-    title: "Plan the week",
-    description: "Schedule recipes into breakfast, lunch, dinner, or snack slots.",
+    title: "Plan weekly meals",
+    description: "Schedule recipes by date and meal type for a clear week view.",
   },
   {
-    title: "Generate groceries",
-    description: "Aggregate recipe ingredients and subtract pantry quantities.",
+    title: "Check pantry inventory",
+    description: "Record existing ingredients before generating grocery needs.",
+  },
+  {
+    title: "Generate shopping lists",
+    description: "Create focused grocery lists from planned meals and pantry gaps.",
   },
 ];
 
@@ -20,30 +24,30 @@ export function DashboardPage() {
     <div className="page">
       <header className="page-header">
         <div>
-          <p className="eyebrow">Portfolio MVP</p>
-          <h1>Meal planning dashboard</h1>
+          <p className="eyebrow">Interview Demo</p>
+          <h1>Recipe-to-shopping workflow</h1>
           <p>
-            A full-stack workflow for recipes, weekly meal plans, pantry tracking,
-            and generated shopping lists.
+            EaseCook connects recipe management, weekly meal planning, pantry tracking,
+            and generated grocery lists in one full-stack workflow.
           </p>
         </div>
       </header>
 
       <section className="metric-grid" aria-label="Project status">
         <MetricCard
-          label="Core workflow"
-          value="4 steps"
-          helperText="Recipe, meal plan, pantry, shopping list"
+          label="Demo path"
+          value="4 screens"
+          helperText="Recipes, meal plans, pantry, shopping"
         />
         <MetricCard
-          label="Backend"
-          value="DRF API"
-          helperText="JWT authentication and OpenAPI docs"
+          label="API surface"
+          value="JWT + DRF"
+          helperText="Authenticated REST endpoints"
         />
         <MetricCard
-          label="Database"
+          label="Data model"
           value="PostgreSQL"
-          helperText="Relational models with user ownership"
+          helperText="Owned relational records"
         />
       </section>
 

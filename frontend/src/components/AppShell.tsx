@@ -2,11 +2,11 @@ import {NavLink, type NavLinkRenderProps, Outlet} from "react-router";
 import {useAuth} from "../auth/useAuth";
 
 const navigationItems = [
-  {label: "Dashboard", to: "/"},
-  {label: "Recipes", to: "/recipes"},
-  {label: "Meal Plan", to: "/meal-plan"},
-  {label: "Pantry", to: "/pantry"},
-  {label: "Shopping", to: "/shopping"},
+  {label: "Dashboard", to: "/", helper: "Overview"},
+  {label: "Recipes", to: "/recipes", helper: "Cookbook"},
+  {label: "Meal Plan", to: "/meal-plan", helper: "Schedule"},
+  {label: "Pantry", to: "/pantry", helper: "Inventory"},
+  {label: "Shopping", to: "/shopping", helper: "Grocery run"},
 ];
 
 export function AppShell() {
@@ -33,14 +33,18 @@ export function AppShell() {
                 key={item.to}
                 to={item.to}
               >
-                {item.label}
+                <span>{item.label}</span>
+                <small>{item.helper}</small>
               </NavLink>
             ))}
           </nav>
         </div>
 
         <div className="sidebar-footer">
-          <span>{user?.username}</span>
+          <div>
+            <span className="user-label">Signed in as</span>
+            <strong>{user?.username}</strong>
+          </div>
           <button type="button" onClick={logout}>
             Sign out
           </button>
